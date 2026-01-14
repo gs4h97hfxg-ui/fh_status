@@ -1,0 +1,131 @@
+* {
+  box-sizing: border-box;
+  font-family: Inter, Arial, sans-serif;
+  color: #ffffff;
+}
+
+body {
+  margin: 0;
+  background: transparent;
+}
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+
+/* PANELS */
+.panel {
+  background: rgba(15, 15, 15, 0.75);
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 180px;
+}
+
+/* STATUS BARS */
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bar {
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  transition: width 0.25s ease;
+}
+
+.bar.health span { background: #e74c3c; }
+.bar.armor span  { background: #3498db; }
+.bar.stamina span{ background: #2ecc71; }
+
+/* MONEY */
+.money div {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* PLAYER */
+.player {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* VEHICLE */
+.vehicle {
+  font-size: 14px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* VOICE */
+.voice {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  font-size: 12px;
+  letter-spacing: 1px;
+  opacity: 0.5;
+  transition: 0.2s;
+}
+
+.voice.active {
+  background: #27ae60;
+  opacity: 1;
+}
+
+/* =========================================================
+   HUD ELEMENT POSITION CONFIG
+   → Hier bestimmst du die Position JE DES Elements einzeln
+   → Nur diese Werte anpassen
+   ========================================================= */
+
+/* STATUS (Health / Armor / Stamina) */
+.status {
+  position: absolute;
+  left: 300px;
+  bottom: 20px;
+}
+
+/* MONEY (Cash / Bank) */
+.money {
+  position: absolute;
+  left: 300px;
+  bottom: 80px;
+}
+
+/* PLAYER INFO (Server / ID) */
+.player {
+  position: absolute;
+  left: 300px;
+  bottom: 145px;
+}
+
+/* VEHICLE HUD */
+.vehicle {
+  position: absolute;
+  right: 500px;
+  bottom: 30px;
+}
+
+/* VOICE INDICATOR */
+.voice {
+  position: absolute;
+  right: 300px;
+  bottom: 20px;
+}

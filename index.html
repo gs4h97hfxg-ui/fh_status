@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>HUD</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="hud">
+
+    <!-- STATUS -->
+    <div class="panel status">
+      <div class="bar health"><span></span></div>
+      <div class="bar armor"><span></span></div>
+      <div class="bar stamina"><span></span></div>
+    </div>
+
+    <!-- MONEY -->
+    <div class="panel money">
+      <div>💵 <span id="cash">0</span></div>
+      <div>🏦 <span id="bank">0</span></div>
+    </div>
+
+    <!-- PLAYER -->
+    <div class="panel player">
+      <div id="serverName">Server</div>
+      <div>ID: <span id="playerId">0</span></div>
+    </div>
+
+    <!-- VEHICLE -->
+    <div class="panel vehicle hidden">
+      <div><span id="speed">0</span> km/h</div>
+      <div>Tank: <span id="fuel">0</span>%</div>
+      <div>Drehzahl: <span id="rpm">0</span>%</div>
+    </div>
+
+    <!-- VOICE -->
+    <div id="voice" class="voice">VOICE</div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
