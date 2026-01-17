@@ -1,17 +1,28 @@
 local ESX = exports.es_extended:getSharedObject()
 
-local lastHealth, lastArmor, lastStamina = -1, -1, -1
-local lastSpeed, lastFuel, lastRPM = -1, -1, -1
+local lastHealth, lastArmor, lastHunger, lastThirst = -1, -1, -1, -1
+local lastSpeed, lastFuel = -1, -1
 local lastTalking = false
 
--- Player Grunddaten (einmalig)
-AddEventHandler('esx:playerLoaded', function()
+-- Player Grunddaten (einmalig beim Laden)
+local function initHUD()
+    Wait(500)
     lib.sendNuiMessage('hud:init', {
         playerId = GetPlayerServerId(PlayerId()),
         serverName = GetConvar('sv_hostname', 'FiveM Server')
     })
-
     TriggerServerEvent('hud:requestMoney')
+end
+
+RegisterNetEvent('esx:playerLoaded', function()
+    initHUD()
+end)
+
+-- Falls das Script restartet wird und der Spieler bereits da ist
+CreateThread(function()
+    if ESX.IsPlayerLoaded() then
+        initHUD()
+    end
 end)
 
 -- Geld-Updates (eventbasiert)
@@ -22,34 +33,50 @@ RegisterNetEvent('hud:updateMoney', function(cash, bank)
     })
 end)
 
--- ESX Money Events
-AddEventHandler('esx:setAccountMoney', function()
+-- ESX Money Events (Triggered whenever money changes)
+RegisterNetEvent('esx:setAccountMoney', function()
     TriggerServerEvent('hud:requestMoney')
 end)
 
--- Status Loop
+RegisterNetEvent('esx:addInventoryItem', function()
+    TriggerServerEvent('hud:requestMoney')
+end)
+
+-- Status Loop (Health, Armor, Hunger, Thirst, Voice)
 CreateThread(function()
     while true do
-        Wait(400)
+        Wait(500)
 
         local ped = cache.ped
         if not ped then goto continue end
 
-        local health = GetEntityHealth(ped) - 100
-        local armor = GetPedArmour(ped)
-        local stamina = GetPlayerSprintStaminaRemaining(PlayerId())
-        local talking = NetworkIsPlayerTalking(PlayerId())
+        local health = math.floor((GetEntityHealth(ped) - 100))
+        if health < 0 then health = 0 end
 
-        if health ~= lastHealth or armor ~= lastArmor or stamina ~= lastStamina or talking ~= lastTalking then
+        local armor = GetPedArmour(ped)
+        local talking = MumbleIsPlayerTalking(PlayerId()) -- Better for pma-voice
+
+        -- Hunger & Thirst from ESX Status
+        local hunger, thirst = 0, 0
+        TriggerEvent('esx_status:getStatus', 'hunger', function(status)
+            hunger = math.floor(status.getPercent())
+        end)
+        TriggerEvent('esx_status:getStatus', 'thirst', function(status)
+            thirst = math.floor(status.getPercent())
+        end)
+
+        if health ~= lastHealth or armor ~= lastArmor or hunger ~= lastHunger or thirst ~= lastThirst or talking ~= lastTalking then
             lastHealth = health
             lastArmor = armor
-            lastStamina = stamina
+            lastHunger = hunger
+            lastThirst = thirst
             lastTalking = talking
 
             lib.sendNuiMessage('hud:status', {
                 health = health,
                 armor = armor,
-                stamina = stamina,
+                hunger = hunger,
+                thirst = thirst,
                 talking = talking
             })
         end
@@ -58,31 +85,30 @@ CreateThread(function()
     end
 end)
 
--- Vehicle Loop
+-- Vehicle Loop (Speed, Fuel)
 CreateThread(function()
     while true do
-        Wait(200)
-
         local vehicle = cache.vehicle
+
         if not vehicle then
             lib.sendNuiMessage('hud:vehicle', { inVehicle = false })
+            Wait(1000)
             goto continue
         end
 
-        local speed = math.floor(GetEntitySpeed(vehicle) * 3.6)
-        local fuel = Entity(vehicle).state.fuel or GetVehicleFuelLevel(vehicle)
-        local rpm = math.floor(GetVehicleCurrentRpm(vehicle) * 100)
+        Wait(150)
 
-        if speed ~= lastSpeed or fuel ~= lastFuel or rpm ~= lastRPM then
+        local speed = math.floor(GetEntitySpeed(vehicle) * 3.6) -- KMH
+        local fuel = math.floor(Entity(vehicle).state.fuel or GetVehicleFuelLevel(vehicle))
+
+        if speed ~= lastSpeed or fuel ~= lastFuel then
             lastSpeed = speed
             lastFuel = fuel
-            lastRPM = rpm
 
             lib.sendNuiMessage('hud:vehicle', {
                 inVehicle = true,
                 speed = speed,
-                fuel = fuel,
-                rpm = rpm
+                fuel = fuel
             })
         end
 
