@@ -15,7 +15,6 @@ body {
   pointer-events: none;
 }
 
-
 /* PANELS */
 .panel {
   background: rgba(15, 15, 15, 0.75);
@@ -28,12 +27,30 @@ body {
 .status {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-item i {
+  width: 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.status-item:nth-child(1) i { color: #e74c3c; } /* Health Icon */
+.status-item:nth-child(2) i { color: #3498db; } /* Armor Icon */
+.status-item:nth-child(3) i { color: #e67e22; } /* Hunger Icon */
+.status-item:nth-child(4) i { color: #00a8ff; } /* Thirst Icon */
+
 .bar {
+  flex: 1; /* Take remaining width */
   height: 8px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -45,14 +62,32 @@ body {
   transition: width 0.25s ease;
 }
 
-.bar.health span { background: #e74c3c; }
-.bar.armor span  { background: #3498db; }
-.bar.stamina span{ background: #2ecc71; }
+.bar.health span {
+  background: #e74c3c;
+}
+.bar.armor span {
+  background: #3498db;
+}
+.bar.hunger span {
+  background: #e67e22;
+}
+.bar.thirst span {
+  background: #00a8ff;
+}
 
 /* MONEY */
-.money div {
+.money .money-item {
   font-size: 14px;
   line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.money .money-item i {
+  width: 18px;
+  text-align: center;
+  color: #2ecc71; /* Accent color for money icons */
 }
 
 /* PLAYER */
@@ -61,9 +96,97 @@ body {
   opacity: 0.85;
 }
 
+.player .player-id-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.player .player-id-wrapper i {
+  color: #3498db; /* Same blue as armor for a techy feel */
+  font-size: 12px;
+}
+
 /* VEHICLE */
 .vehicle {
-  font-size: 14px;
+  width: 45px;
+  height: 45px;
+  min-width: 45px; /* Override panel min-width */
+  padding: 0;
+  background: rgba(15, 15, 15, 0.75) !important;
+  border-radius: 50%;
+  border: none !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.fuel-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform: rotate(45deg); /* Gap on the right */
+}
+
+.fuel-ring circle {
+  fill: none;
+  stroke-width: 3.5;
+  transform-origin: center;
+  stroke-dasharray: 99 132; /* ~270 degree arc */
+}
+
+.fuel-ring .bg {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.fuel-ring .progress {
+  stroke: #f1c40f; 
+  stroke-linecap: round;
+  stroke-dashoffset: 99; /* Empty */
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.6s ease;
+}
+
+.speed-info {
+  position: absolute;
+  top: 50%;
+  left: 30%; /* Starts exactly in the middle */
+  transform: translateY(-50%); /* Only center vertically */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Grow to the right */
+  z-index: 5;
+}
+
+#speed {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.speed-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+#speed {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.speed-info span {
+  font-size: 7px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-top: 1px;
 }
 
 .hidden {
@@ -72,21 +195,25 @@ body {
 
 /* VOICE */
 .voice {
-  position: absolute;
-  bottom: 30px;
-  right: 30px;
-  padding: 8px 14px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.1);
-  font-size: 12px;
-  letter-spacing: 1px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(15, 15, 15, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
   opacity: 0.5;
-  transition: 0.2s;
+  transition: all 0.25s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
 }
 
 .voice.active {
-  background: #27ae60;
+  background: rgba(39, 174, 96, 0.9);
   opacity: 1;
+  border-color: #2ecc71;
+  box-shadow: 0 0 15px rgba(46, 204, 113, 0.4);
 }
 
 /* =========================================================
@@ -106,26 +233,26 @@ body {
 .money {
   position: absolute;
   left: 300px;
-  bottom: 80px;
+  bottom: 133px;
 }
 
 /* PLAYER INFO (Server / ID) */
 .player {
   position: absolute;
-  left: 300px;
-  bottom: 145px;
+  right: 20px;
+  bottom: 800px;
 }
 
 /* VEHICLE HUD */
 .vehicle {
   position: absolute;
-  right: 500px;
-  bottom: 30px;
+  left: 250px;
+  bottom: 20px;
 }
 
 /* VOICE INDICATOR */
 .voice {
   position: absolute;
-  right: 300px;
+  left: 200px;
   bottom: 20px;
 }
